@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insecure-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: insecure
+  template:
+    metadata:
+      labels:
+        app: insecure
+    spec:
+      containers:
+        - name: app
+          image: nginx:latest  # ❗ latest 태그 사용
+          securityContext:
+            privileged: true   # ❗ 권한 상승
+          resources:
+            limits:
+              memory: "512Mi"
+ 
