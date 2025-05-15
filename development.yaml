@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insecure-app
+  labels:
+    app: insecure-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: insecure-app
+  template:
+    metadata:
+      labels:
+        app: insecure-app
+    spec:
+      containers:
+        - name: insecure-container
+          image: nginx:latest  # ❌ 최신 태그 사용 (태그 고정 안 됨)
+          securityContext:
+            runAsUser: 0       # ❌ 루트 권한으로 실행
+            privileged: true   # ❌ Privileged 모드
+          env:
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "hardcoded-aws-secret"  # ❌ 하드코딩된 시크릿
+          volumeMounts:
+            - mountPath: /etc
+              name: etc-volume
+      volumes:
+        - name: etc-volume
+          hostPath:            # ❌ 호스트 경로 마운트
+            path: /etc
+            type: Directory
